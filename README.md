@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# textcopy
 
-## Getting Started
+Share text between devices using a short code. No accounts, no sign-ups.
 
-First, run the development server:
+One person writes text, gets a 6-character code. Another person enters the code, sees the text. That's it.
+
+## How it works
+
+1. Click **New** to create an entry. You get a unique code.
+2. Write your text and hit **Save**.
+3. Share the code. Anyone with it can view the text.
+4. Entries expire automatically after **60 minutes**.
+
+## Quick start
+
+### Docker (recommended)
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+docker compose up --build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:8080](http://localhost:8080).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Local development
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Prerequisites:** Go 1.25+, Node.js 22+
 
-## Learn More
+```bash
+# Build the frontend
+cd frontend && npm install && npm run build && cd ..
 
-To learn more about Next.js, take a look at the following resources:
+# Run the server
+go run main.go
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Open [http://localhost:8080](http://localhost:8080).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+For frontend development with hot reload:
 
-## Deploy on Vercel
+```bash
+cd frontend && npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This starts the Next.js dev server on [http://localhost:3000](http://localhost:3000).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## API
+
+All text values are stored and transmitted as **base64-encoded** strings. The API accepts and returns JSON.
+
+| Method | Endpoint | Description |
+|--------|---------------------|--------------------------------------|
+| POST | `/api/texts` | Create a new entry. Returns `{code}` |
+| PUT | `/api/texts/{code}` | Update text for an existing code |
+| GET | `/api/texts/{code}` | Retrieve text by code |
+| GET | `/api/hello` | Health check |
+
+### Create
+
+```bash
+curl -X POST http://localhost:8080/api/texts
+```
+```json
+{"code": "r1SA9K"}
+```
+
+### Update
+
+```bash
+curl -X PUT http://localhost:8080/api/texts/r1SA9K \
+  -H "Content-Type: application/json" \
+  -d '{"text": "SGVsbG8gV29ybGQ="}'
+```
+```json
+{"code": "r1SA9K"}
+```
+
+### Read
+
+```bash
+curl http://localhost:8080/api/texts/r1SA9K
+```
+```json
+{"code": "r1SA9K", "text": "SGVsbG8gV29ybGQ="}
+```
+
+## Architecture
+
+```
+textcopy/
+├── main.go              # Go server — API + static file serving
+├── go.mod
+├── frontend/            # Next.js app (static export)
+│   ├── src/app/
+│   │   ├── page.tsx     # Home — enter code or create new
+│   │   ├── view/        # View text (read-only)
+│   │   └── edit/        # Edit text
+│   └── next.config.ts
+├── Dockerfile           # Multi-stage build
+└── docker-compose.yml
+```
+
+**Backend:** Single Go binary, zero external dependencies. Text is stored in-memory using a concurrent map. A background goroutine sweeps expired entries every minute.
+
+**Frontend:** Next.js with static export served by the Go server. Styled with Tailwind CSS using a minimal monospace theme.
+
+## Configuration
+
+| Variable | Default | Description |
+|-------------|-----------------|--------------------------------------|
+| `PORT` | `8080` | Server listen port |
+| `STATIC_DIR`| `./frontend/out`| Path to the frontend static build |
+
+## License
+
+MIT
