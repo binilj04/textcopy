@@ -79,14 +79,6 @@ function EditContent() {
           >
             &larr; textcopy
           </Link>
-        </div>
-
-        {/* Code + Lock */}
-        <div className="flex items-center gap-3 mb-6">
-          <h1 className="text-lg font-semibold">
-            Code: <span className="text-accent">{code}</span>
-          </h1>
-
           <Link
             href={`/view?code=${code}`}
             title="Lock and view"
@@ -105,6 +97,13 @@ function EditContent() {
               <path d="M7 11V7a5 5 0 0 1 5-5 5 5 0 0 1 5 5v1" />
             </svg>
           </Link>
+        </div>
+
+        {/* Code */}
+        <div className="flex items-center gap-3 mb-6">
+          <h1 className="text-lg font-semibold">
+            Code: <span className="text-accent">{code}</span>
+          </h1>
         </div>
 
         {/* Editor */}
