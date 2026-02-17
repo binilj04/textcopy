@@ -27,13 +27,27 @@ Share the code with anyone. They see the text instantly — no login required.
 
 ### Docker (recommended)
 
+For **local development**, builds from the Dockerfile using the override file:
+
 ```bash
 docker compose up --build
 ```
 
+For **production**, pulls the pre-built image from GitHub Container Registry:
+
+```bash
+docker compose -f docker-compose.yml up
+```
+
+Or run the image directly without docker-compose:
+
+```bash
+docker run -p 8080:8080 ghcr.io/binilj04/textcopy:latest
+```
+
 Open [http://localhost:8080](http://localhost:8080).
 
-### Local development
+### Local development (without Docker)
 
 **Prerequisites:** Go 1.25+, Node.js 22+
 
