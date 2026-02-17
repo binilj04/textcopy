@@ -110,6 +110,10 @@ textcopy/
 | `PORT` | `8080` | Server listen port |
 | `STATIC_DIR`| `./frontend/out`| Path to the frontend static build |
 
+## Disclaimer
+
+This project was developed with the assistance of AI-powered code generation tools. While the code has been reviewed and tested, users should exercise their own judgement when deploying to production environments.
+
 ## License
 
 MIT
