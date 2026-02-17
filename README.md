@@ -4,6 +4,18 @@ Share text between devices using a short code. No accounts, no sign-ups.
 
 One person writes text, gets a 6-character code. Another person enters the code, sees the text. That's it.
 
+![Home](screenshots/home.jpg)
+
+Create a new entry or enter an existing code to retrieve shared text.
+
+![Edit](screenshots/edit.jpg)
+
+Write or edit your text. Every entry gets a unique short code.
+
+![View](screenshots/view.jpg)
+
+Share the code with anyone. They see the text instantly — no login required.
+
 ## How it works
 
 1. Click **New** to create an entry. You get a unique code.
